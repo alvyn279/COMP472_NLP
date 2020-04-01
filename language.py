@@ -1,14 +1,6 @@
-import enum
 import string
 
-
-class Language(enum.Enum):
-    EU = 'eu'
-    CA = 'ca'
-    GL = 'gl'
-    ES = 'es'
-    EN = 'en'
-    PT = 'pt'
+LANGUAGES = ['eu', 'ca', 'gl', 'es', 'en', 'pt']
 
 
 def add_alphabet_to_ocurrence_dict(is_uppercase: bool, corpus):

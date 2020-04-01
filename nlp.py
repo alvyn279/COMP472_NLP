@@ -1,4 +1,5 @@
 import argparse
+from parser import DataParser
 
 parser = argparse.ArgumentParser(
     description='Naive Bayes Classifier for Tweet Language Detection',
@@ -30,7 +31,13 @@ parser.add_argument('testing_file',
 
 def main():
     args = parser.parse_args()
-    print(args)
+
+    training_data_parser: DataParser = DataParser(
+        args.training_file,
+        args.n,
+        args.v,
+        args.delta
+    )
 
 
 if __name__ == '__main__':

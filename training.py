@@ -1,6 +1,7 @@
-from language import Language
+from ngrams import Ngram
 
 
 class LanguageTrainingModel:
-    def __init__(self, language: Language):
+    def __init__(self, language: str, ngram: Ngram):
         self.language = language
+        self.ngram = ngram
