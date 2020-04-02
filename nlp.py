@@ -39,6 +39,10 @@ def main():
         args.delta
     )
 
+    training_data_parser.parse()
+
+    print('lol')
+
 
 if __name__ == '__main__':
     main()

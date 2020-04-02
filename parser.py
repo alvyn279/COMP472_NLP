@@ -2,6 +2,8 @@ from language import LANGUAGES
 from training import LanguageTrainingModel
 from ngrams import UnigramModel, BigramModel, TrigramModel
 
+from typing import List
+
 
 class DataParser:
     """
@@ -24,7 +26,21 @@ class DataParser:
             elif ngram_size == 3:
                 self.models[lang] = LanguageTrainingModel(lang, TrigramModel(vocabulary))
 
-        print('lol')
-
     def parse(self):
-        pass
+        try:
+            f = open(self.input_file, "r")
+        except FileNotFoundError as e:
+            print(e)
+            print("Please input a file that exists.")
+            exit(1)
+
+        lines: List[str] = f.readlines()
+        for line in lines:
+            line_info: List[str] = line.split('\t')
+            parsed_user_id = line_info[0]
+            parsed_username = line_info[1]
+            parsed_language = line_info[2]
+            parsed_tweet_content = line_info[3]
+
+            self.models[parsed_language].insert(parsed_tweet_content)
+

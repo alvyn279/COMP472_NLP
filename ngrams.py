@@ -25,28 +25,27 @@ class NgramModel(ABC):
             add_alphabet_to_ocurrence_dict(True, target_dict)
 
     def _vocab_safe_check(self, ngram: str):
-        try:
-            if self.vocab == 0 or self.vocab == 1:
-                for char in ngram:
-                    # checking first level is sufficient, corpus already populated
-                    # with correct alphabet
-                    if char not in self.corpus:
-                        raise CharNotInVocabularyException('Dismiss for vocab {}: "{}"'.format(self.vocab, ngram))
-            elif self.vocab == 2:
-                for char in ngram:
-                    if char not in self.corpus and char.isalpha():
-                        self._spread_new_vocab_char(char)
-                    else:
-                        raise CharNotInVocabularyException('Dismiss for vocab {}: "{}"'.format(self.vocab, ngram))
-
-        except CharNotInVocabularyException as e:
-            print(e)
-            return
+        if self.vocab == 0 or self.vocab == 1:
+            for char in ngram:
+                # checking first level is sufficient, corpus already populated
+                # with correct alphabet
+                if char not in self.corpus:
+                    raise CharNotInVocabularyException('Dismiss for vocab {}: "{}"'.format(self.vocab, ngram))
+        elif self.vocab == 2:
+            for char in ngram:
+                if char not in self.corpus and char.isalpha():
+                    self._spread_new_vocab_char(char)
+                else:
+                    raise CharNotInVocabularyException('Dismiss for vocab {}: "{}"'.format(self.vocab, ngram))
 
     def insert(self, ngrams: List[str]):
         for ngram in ngrams:
-            self._vocab_safe_check(ngram)
-            self._insert_ngram(ngram)
+            try:
+                self._vocab_safe_check(ngram)
+                self._insert_ngram(ngram)
+            except CharNotInVocabularyException as e:
+                print(e)
+                continue
 
     @abstractmethod
     def _build_corpus(self):
