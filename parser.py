@@ -1,6 +1,6 @@
 from language import LANGUAGES
 from training import LanguageTrainingModel
-from ngrams import Unigram, Bigram, Trigram
+from ngrams import UnigramModel, BigramModel, TrigramModel
 
 
 class DataParser:
@@ -17,14 +17,14 @@ class DataParser:
         self.models = {}  # Dict[Language: LanguageTrainingModel]
 
         for lang in LANGUAGES:
-            print(lang)
-
             if ngram_size == 1:
-                self.models[lang] = LanguageTrainingModel(lang, Unigram(vocabulary))
+                self.models[lang] = LanguageTrainingModel(lang, UnigramModel(vocabulary))
             elif ngram_size == 2:
-                self.models[lang] = LanguageTrainingModel(lang, Bigram(vocabulary))
+                self.models[lang] = LanguageTrainingModel(lang, BigramModel(vocabulary))
             elif ngram_size == 3:
-                self.models[lang] = LanguageTrainingModel(lang, Trigram(vocabulary))
+                self.models[lang] = LanguageTrainingModel(lang, TrigramModel(vocabulary))
+
+        print('lol')
 
     def parse(self):
         pass
