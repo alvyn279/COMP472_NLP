@@ -12,17 +12,22 @@ class NgramModel(ABC):
         self.n = 0
         self.corpus = {}
         self.vocab = vocab
+        self.extra_vocab_chars = set()
         self._build_corpus()
 
     def _build_one_level_vocab(self, target_dict):
+        """
+        Builds at current level of dic
+        """
         if self.vocab == 0:
             add_alphabet_to_ocurrence_dict(False, target_dict)
-        elif self.vocab == 1:
+        else:
             add_alphabet_to_ocurrence_dict(False, target_dict)
             add_alphabet_to_ocurrence_dict(True, target_dict)
-        elif self.vocab == 2:
-            add_alphabet_to_ocurrence_dict(False, target_dict)
-            add_alphabet_to_ocurrence_dict(True, target_dict)
+
+        if self.vocab == 2:
+            for char in self.extra_vocab_chars:
+                target_dict[char] = 0
 
     def _vocab_safe_check(self, ngram: str):
         if self.vocab == 0 or self.vocab == 1:
@@ -33,8 +38,10 @@ class NgramModel(ABC):
                     raise CharNotInVocabularyException('Dismiss for vocab {}: "{}"'.format(self.vocab, ngram))
         elif self.vocab == 2:
             for char in ngram:
-                if char not in self.corpus and char.isalpha():
-                    self._spread_new_vocab_char(char)
+                if char.isalpha():
+                    if char not in self.corpus:
+                        self.extra_vocab_chars.add(char)
+                        self._spread_new_vocab_char(char)
                 else:
                     raise CharNotInVocabularyException('Dismiss for vocab {}: "{}"'.format(self.vocab, ngram))
 
@@ -115,8 +122,10 @@ class BigramModel(NgramModel):
 
     def _spread_new_vocab_char(self, char: str):
         self.corpus[char] = {}
-        self.corpus[char][char] = 0
         self._build_one_level_vocab(self.corpus[char])
+
+        for char_1 in self.corpus:
+            self.corpus[char_1][char] = 0
 
     def _insert_ngram(self, bigram: str):
         self.corpus[bigram[0]][bigram[1]] += 1
@@ -143,7 +152,6 @@ class TrigramModel(NgramModel):
     def __init__(self, vocab):
         super(TrigramModel, self).__init__(vocab)
         self.n = 3
-        pass
 
     def _build_corpus(self):
         self._build_one_level_vocab(self.corpus)
@@ -153,13 +161,20 @@ class TrigramModel(NgramModel):
             for char_s in self.corpus[char_f]:
                 self.corpus[char_f][char_s] = {}
                 self._build_one_level_vocab(self.corpus[char_f][char_s])
-        pass
 
     def _spread_new_vocab_char(self, char: str):
         self.corpus[char] = {}
-        self.corpus[char][char] = {}
-        self.corpus[char][char][char] = 0
-        self._build_one_level_vocab(self.corpus[char][char])
+        self._build_one_level_vocab(self.corpus[char])
+        for char_2 in self.corpus[char]:
+            self.corpus[char][char_2] = {}
+            self._build_one_level_vocab(self.corpus[char][char_2])
+
+        for char_1 in self.corpus:
+            self.corpus[char_1][char] = {}
+            self._build_one_level_vocab(self.corpus[char_1][char])
+
+            for char_2 in self.corpus[char_1]:
+                self.corpus[char_1][char_2][char] = 0
 
     def _insert_ngram(self, trigram: str):
         self.corpus[trigram[0]][trigram[1]][trigram[2]] += 1
