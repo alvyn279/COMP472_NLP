@@ -1,6 +1,6 @@
 # COMP472_NLP
 
-####Naives Bayes Classifier for Tweet Language Recognition
+#### Naives Bayes Classifier for Tweet Language Recognition
 
 Any language from Basque (eu), Catalan (ca), Galician (gl), Spanish (es), English (en), and Portuguese (pt).
 
