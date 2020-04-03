@@ -27,6 +27,7 @@ class DataParser:
                 self.models[lang] = LanguageTrainingModel(lang, TrigramModel(vocabulary))
 
     def parse(self):
+        document_count = 0
         try:
             f = open(self.input_file, "r")
         except FileNotFoundError as e:
@@ -36,11 +37,19 @@ class DataParser:
 
         lines: List[str] = f.readlines()
         for line in lines:
+            document_count += 1
             line_info: List[str] = line.split('\t')
             parsed_user_id = line_info[0]
             parsed_username = line_info[1]
             parsed_language = line_info[2]
             parsed_tweet_content = line_info[3]
-
             self.models[parsed_language].insert(parsed_tweet_content)
 
+        for model_lang in self.models:
+            self.models[model_lang].post_parse(document_count, self.smoothing)
+
+        self.naive_bayes()
+
+    def naive_bayes(self):
+        for model_lang in self.models:  # for each class
+            self.models[model_lang].compute()
