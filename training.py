@@ -2,6 +2,15 @@ from ngrams import NgramModel, CharNotInVocabularyException
 import copy
 import math
 
+count = 0
+# unicode = 17 planes of 2**16 symbols
+for codepoint in range(17 * 2**16):
+    ch = chr(codepoint)
+    if ch.isalpha():
+        count = count + 1
+
+IS_ALPHA_COUNT = count
+
 
 class LanguageTrainingModel:
     """
@@ -40,6 +49,8 @@ class LanguageTrainingModel:
         self.smoothing = smoothing
         self.total_doc_count = total_doc_count
         self.size_of_vocab = len(self.ngram_model.corpus)
+        if self.ngram_model.vocab == 2:
+            self.size_of_vocab += IS_ALPHA_COUNT
         self.probabilities = copy.deepcopy(self.ngram_model.corpus)
         self.prior = math.log10(self.class_size / self.total_doc_count)
         self.non_existing_char_prob = self._compute_prob_value(0)
