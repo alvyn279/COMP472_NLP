@@ -21,8 +21,9 @@ class LanguageTrainingModel:
         self.language = language
         self.ngram_model = ngram_model
         self.smoothing = 0
-        self.class_size = 0
-        self.total_doc_count = 0  # needed to calculate prior
+        self.docs_for_this_model = 0  # e.g.: documents marked 'es'
+        self.class_size = 0  # number of ngrams inserted in corpus
+        self.total_doc_count = 0  # total number of documents scanned
         self.probabilities = {}
         self.size_of_vocab = 0
         self.prior = 0.0
@@ -39,8 +40,11 @@ class LanguageTrainingModel:
         return math.log10((occurence + self.smoothing) / (self.class_size + self.size_of_vocab))
 
     def insert(self, tweet: str):
-        self.class_size += 1
-        self.ngram_model.insert(self._ngrams_list(tweet))
+        """
+        Given a tweet, tries to insert all possible ngrams, while updating class size
+        """
+        self.docs_for_this_model += 1
+        self.class_size += self.ngram_model.insert(self._ngrams_list(tweet))
 
     def post_parse(self, total_doc_count, smoothing):
         """
@@ -52,7 +56,7 @@ class LanguageTrainingModel:
         if self.ngram_model.vocab == 2:
             self.size_of_vocab += IS_ALPHA_COUNT
         self.probabilities = copy.deepcopy(self.ngram_model.corpus)
-        self.prior = math.log10(self.class_size / self.total_doc_count)
+        self.prior = math.log10(self.docs_for_this_model / self.total_doc_count)
         self.non_existing_char_prob = self._compute_prob_value(0)
 
     def compute(self):
@@ -83,8 +87,6 @@ class LanguageTrainingModel:
                 score += self.ngram_model.get_prob(ngram, self.probabilities)
             except CharNotInVocabularyException as e:
                 score += self.non_existing_char_prob
-            except Exception:
-                print('lol')
 
         return score
 

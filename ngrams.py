@@ -48,13 +48,19 @@ class NgramModel(ABC):
                     raise CharNotInVocabularyException('Dismiss for vocab {}: "{}"'.format(self.vocab, ngram))
 
     def insert(self, ngrams: List[str]):
+        """
+        Inserts if possible an ngram in the corpus, returns the amount of ngrams inserted
+        """
+        count = 0
         for ngram in ngrams:
             try:
                 self.vocab_safe_check(ngram)
                 self._insert_ngram(ngram)
+                count += 1
             except CharNotInVocabularyException as e:
                 print(e)
                 continue
+        return count
 
     @abstractmethod
     def _build_corpus(self):
