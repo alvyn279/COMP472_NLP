@@ -1,4 +1,4 @@
-from ngrams import NgramModel
+from ngrams import NgramModel, CharNotInVocabularyException
 import copy
 import math
 
@@ -18,6 +18,7 @@ class LanguageTrainingModel:
         self.size_of_vocab = 0
         self.prior = 0.0
         self.score = 0.0
+        self.non_existing_char_prob = 0.0
 
     def _ngrams_list(self, tweet: str):
         return list(tweet[j:j + self.ngram_model.n] for j in range(0, len(tweet) - (self.ngram_model.n - 1)))
@@ -41,6 +42,7 @@ class LanguageTrainingModel:
         self.size_of_vocab = len(self.ngram_model.corpus)
         self.probabilities = copy.deepcopy(self.ngram_model.corpus)
         self.prior = math.log10(self.class_size / self.total_doc_count)
+        self.non_existing_char_prob = self._compute_prob_value(0)
 
     def compute(self):
         for char_1 in self.probabilities:
@@ -61,6 +63,22 @@ class LanguageTrainingModel:
 
     def test(self, tweet: str):
         """
-        Computes score for tested tweet for the current class
+        Computes score for given tweet for the current class
         """
-        pass
+        score = self.prior
+        for ngram in self._ngrams_list(tweet):
+            try:
+                self.ngram_model.vocab_safe_check(ngram, False)
+                score += self.ngram_model.get_prob(ngram, self.probabilities)
+            except CharNotInVocabularyException as e:
+                score += self.non_existing_char_prob
+
+        return score
+
+
+class Score:
+    def __init__(self, tweet_id, score, guessed_lang, actual_lang):
+        self.tweet_id = tweet_id
+        self.score = score
+        self.guessed_lang = guessed_lang
+        self.actual_lang = actual_lang

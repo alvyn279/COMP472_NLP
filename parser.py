@@ -1,5 +1,5 @@
 from language import LANGUAGES
-from training import LanguageTrainingModel
+from training import LanguageTrainingModel, Score
 from ngrams import UnigramModel, BigramModel, TrigramModel
 
 from typing import List
@@ -39,7 +39,7 @@ class DataParser:
         for line in lines:
             document_count += 1
             line_info: List[str] = line.split('\t')
-            parsed_user_id = line_info[0]
+            parsed_tweet_id = line_info[0]
             parsed_username = line_info[1]
             parsed_language = line_info[2]
             parsed_tweet_content = line_info[3]
@@ -53,3 +53,44 @@ class DataParser:
     def naive_bayes(self):
         for model_lang in self.models:  # for each class
             self.models[model_lang].compute()
+
+
+class TestParser:
+    """
+    Class that runs trained models against a test file
+    Precondition: DataParser object created and trained (parse() function was ran)
+    """
+
+    def __init__(self, parser: DataParser, input_test_file: str):
+        self.training_parser = parser
+        self.input_test_file = input_test_file
+        self.results: List[List[Score]] = []
+
+    def parse(self):
+        try:
+            f = open(self.input_test_file, "r")
+        except FileNotFoundError as e:
+            print(e)
+            print("Please input a test file that exists.")
+            exit(1)
+
+        lines: List[str] = f.readlines()
+        for line in lines:
+            line_info: List[str] = line.split('\t')
+            parsed_tweet_id = line_info[0]
+            parsed_username = line_info[1]
+            parsed_language = line_info[2]
+            parsed_tweet_content = line_info[3]
+
+            scores_for_tweet = []
+            for lang in LANGUAGES:
+                lang_score: float = self.training_parser.models[lang].test(parsed_tweet_content)
+                scores_for_tweet.append(Score(
+                    parsed_tweet_id,
+                    lang_score,
+                    lang,
+                    parsed_language
+                ))
+
+            sorted_scores = sorted(scores_for_tweet, key=lambda x: x.score)
+            self.results.append(sorted_scores)

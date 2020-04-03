@@ -29,7 +29,7 @@ class NgramModel(ABC):
             for char in self.extra_vocab_chars:
                 target_dict[char] = 0
 
-    def _vocab_safe_check(self, ngram: str):
+    def vocab_safe_check(self, ngram: str, update=True):
         if self.vocab == 0 or self.vocab == 1:
             for char in ngram:
                 # checking first level is sufficient, corpus already populated
@@ -39,7 +39,7 @@ class NgramModel(ABC):
         elif self.vocab == 2:
             for char in ngram:
                 if char.isalpha():
-                    if char not in self.corpus:
+                    if char not in self.corpus and update:
                         self.extra_vocab_chars.add(char)
                         self._spread_new_vocab_char(char)
                 else:
@@ -48,7 +48,7 @@ class NgramModel(ABC):
     def insert(self, ngrams: List[str]):
         for ngram in ngrams:
             try:
-                self._vocab_safe_check(ngram)
+                self.vocab_safe_check(ngram)
                 self._insert_ngram(ngram)
             except CharNotInVocabularyException as e:
                 print(e)
@@ -64,6 +64,11 @@ class NgramModel(ABC):
 
     @abstractmethod
     def _insert_ngram(self, ngram: str):
+        pass
+
+    @staticmethod
+    @abstractmethod
+    def get_prob(ngram: str, probabilities):
         pass
 
 
@@ -92,6 +97,10 @@ class UnigramModel(NgramModel):
 
     def _insert_ngram(self, char: str):
         self.corpus[char] += 1
+
+    @staticmethod
+    def get_prob(ngram: str, probabilities):
+        return probabilities[ngram[0]]
 
 
 class BigramModel(NgramModel):
@@ -129,6 +138,10 @@ class BigramModel(NgramModel):
 
     def _insert_ngram(self, bigram: str):
         self.corpus[bigram[0]][bigram[1]] += 1
+
+    @staticmethod
+    def get_prob(ngram: str, probabilities):
+        return probabilities[ngram[0]][ngram[1]]
 
 
 class TrigramModel(NgramModel):
@@ -178,3 +191,7 @@ class TrigramModel(NgramModel):
 
     def _insert_ngram(self, trigram: str):
         self.corpus[trigram[0]][trigram[1]][trigram[2]] += 1
+
+    @staticmethod
+    def get_prob(ngram: str, probabilities):
+        return probabilities[ngram[0]][ngram[1]][ngram[2]]
