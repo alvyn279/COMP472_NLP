@@ -45,7 +45,6 @@ def main():
         args.testing_file
     )
     test_parser.parse()
-
     print('lol')
 
 

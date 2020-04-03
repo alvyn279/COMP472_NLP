@@ -76,11 +76,14 @@ class TestParser:
 
         lines: List[str] = f.readlines()
         for line in lines:
-            line_info: List[str] = line.split('\t')
-            parsed_tweet_id = line_info[0]
-            parsed_username = line_info[1]
-            parsed_language = line_info[2]
-            parsed_tweet_content = line_info[3]
+            try:
+                line_info: List[str] = line.split('\t')
+                parsed_tweet_id = line_info[0]
+                parsed_username = line_info[1]
+                parsed_language = line_info[2]
+                parsed_tweet_content = line_info[3]
+            except IndexError as e:
+                print('Skipped testing for: {}'.format(line))
 
             scores_for_tweet = []
             for lang in LANGUAGES:
@@ -92,5 +95,12 @@ class TestParser:
                     parsed_language
                 ))
 
-            sorted_scores = sorted(scores_for_tweet, key=lambda x: x.score)
+            sorted_scores = sorted(scores_for_tweet, key=lambda x: x.score, reverse=True)
             self.results.append(sorted_scores)
+
+        self.print_results()
+
+    def print_results(self):
+        result: List[Score]  # sorted
+        for result in self.results:
+            print(result[0])  # gets largest score

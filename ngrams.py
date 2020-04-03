@@ -42,6 +42,8 @@ class NgramModel(ABC):
                     if char not in self.corpus and update:
                         self.extra_vocab_chars.add(char)
                         self._spread_new_vocab_char(char)
+                    elif char not in self.corpus:
+                        raise CharNotInVocabularyException('Dismiss for vocab {}: "{}"'.format(self.vocab, ngram))
                 else:
                     raise CharNotInVocabularyException('Dismiss for vocab {}: "{}"'.format(self.vocab, ngram))
 

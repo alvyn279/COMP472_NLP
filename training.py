@@ -4,7 +4,7 @@ import math
 
 count = 0
 # unicode = 17 planes of 2**16 symbols
-for codepoint in range(17 * 2**16):
+for codepoint in range(17 * 2 ** 16):
     ch = chr(codepoint)
     if ch.isalpha():
         count = count + 1
@@ -83,6 +83,8 @@ class LanguageTrainingModel:
                 score += self.ngram_model.get_prob(ngram, self.probabilities)
             except CharNotInVocabularyException as e:
                 score += self.non_existing_char_prob
+            except Exception:
+                print('lol')
 
         return score
 
@@ -93,3 +95,13 @@ class Score:
         self.score = score
         self.guessed_lang = guessed_lang
         self.actual_lang = actual_lang
+        self.is_correct = self.guessed_lang == self.actual_lang
+
+    def __str__(self):
+        return "{}\t{}\t{}\t{}\t{}".format(
+            self.tweet_id,
+            self.guessed_lang,
+            self.score,
+            self.actual_lang,
+            "correct" if self.is_correct else "wrong"
+        )
