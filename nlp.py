@@ -1,5 +1,6 @@
 import argparse
-from parser import DataParser, TestParser
+from ngram_parser import NgramTrainingDataParser, NgramTestParser
+from byom_parser import StopWordTrainingParser, StopWordTestParser
 
 parser = argparse.ArgumentParser(
     description='Naive Bayes Classifier for Tweet Language Detection',
@@ -8,18 +9,20 @@ parser.add_argument('v',
                     help="""Vocabulary to use
                     0:[a-z],
                     1:[a-z, A-Z],
-                    2:[a-z, A-Z] + all characters accepted by built-in isalpha()
+                    2:[a-z, A-Z] + all characters accepted by built-in isalpha(),
+                    -1: BYOM
                     """,
                     type=int)
 parser.add_argument('n',
                     help="""Size of n-grams
                     1:character unigram (bag of words),
                     2:character bigrams,
-                    3:character trigrams
+                    3:character trigrams,
+                    -1: BYOM
                     """,
                     type=int)
 parser.add_argument('delta',
-                    help='Smoothing value δ used for additive smoothing',
+                    help='Smoothing value δ used for additive smoothing, -1: BYOM',
                     type=float)
 parser.add_argument('training_file',
                     help='Path to training file for the language models',
@@ -32,19 +35,31 @@ parser.add_argument('testing_file',
 def main():
     args = parser.parse_args()
 
-    training_data_parser: DataParser = DataParser(
-        args.training_file,
-        args.n,
-        args.v,
-        args.delta
-    )
-    training_data_parser.parse()
+    if args.v == -1 and args.n == -1 and args.delta == -1:
+        stop_word_model_training_parser: StopWordTrainingParser = StopWordTrainingParser(
+            args.training_file
+        )
+        stop_word_model_training_parser.parse()
 
-    test_parser: TestParser = TestParser(
-        training_data_parser,
-        args.testing_file
-    )
-    test_parser.parse()
+        stop_word_test_parser: StopWordTestParser = StopWordTestParser(
+            stop_word_model_training_parser,
+            args.testing_file
+        )
+        stop_word_test_parser.parse()
+    else:
+        training_data_parser: NgramTrainingDataParser = NgramTrainingDataParser(
+            args.training_file,
+            args.n,
+            args.v,
+            args.delta
+        )
+        training_data_parser.parse()
+
+        test_parser: NgramTestParser = NgramTestParser(
+            training_data_parser,
+            args.testing_file
+        )
+        test_parser.parse()
 
 
 if __name__ == '__main__':

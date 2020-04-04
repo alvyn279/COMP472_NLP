@@ -14,3 +14,8 @@ python nlp.py --help
 # usage: nlp.py [-h] v n delta training_file testing_file
 
 ```
+
+#### References
+I made use of a set of static stopwords other than from _nltk_'s sources for Basque, Galician, and Catalan languages. 
+[This is the link](https://github.com/Xangis/extra-stopwords) to the GitHub repository.
+

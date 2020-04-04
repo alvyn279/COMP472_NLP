@@ -1,4 +1,6 @@
 from ngrams import NgramModel, CharNotInVocabularyException
+from nltk.tokenize import word_tokenize
+from typing import List
 import copy
 import math
 
@@ -12,7 +14,7 @@ for codepoint in range(17 * 2 ** 16):
 IS_ALPHA_COUNT = count
 
 
-class LanguageTrainingModel:
+class NgramLanguageTrainingModel:
     """
     Operates on the models, such as frequency to probability calculator
     """
@@ -88,6 +90,34 @@ class LanguageTrainingModel:
             except CharNotInVocabularyException as e:
                 score += self.non_existing_char_prob
 
+        return score
+
+
+class StopWordTrainingModel:
+    def __init__(self, language: str, stop_words: List[str]):
+        self.language = language
+        self.corpus = {}
+        for stop_word in stop_words:
+            self.corpus[stop_word] = 1
+
+    def insert(self, single_word: str):
+        """
+        Adds value/weight to word
+        """
+        lower_single_word = single_word.lower()
+        if lower_single_word in self.corpus:
+            self.corpus[lower_single_word] += 1
+
+    def test(self, tweet: str):
+        """
+        Computes score for given tweet for the stop word training model
+        """
+        score = 0
+        text_tokens = word_tokenize(tweet)
+        for text_token in text_tokens:
+            lower_text_token = text_token.lower()
+            if lower_text_token in self.corpus:
+                score += self.corpus[lower_text_token]
         return score
 
 

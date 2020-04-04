@@ -1,5 +1,5 @@
 from language import LANGUAGES
-from training import LanguageTrainingModel, Score, ClassScore
+from training import NgramLanguageTrainingModel, Score, ClassScore
 from ngrams import UnigramModel, BigramModel, TrigramModel
 
 from typing import List
@@ -10,7 +10,7 @@ REL_PATH_TO_TRACE = "./output/trace_{}_{}_{}.txt"
 REL_PATH_TO_EVAL = "./output/eval_{}_{}_{}.txt"
 
 
-class DataParser:
+class NgramTrainingDataParser:
     """
     Parses the data contained in the files given as input
     Builds models by populating the corpus
@@ -21,15 +21,15 @@ class DataParser:
         self.ngram_size: int = ngram_size
         self.vocabulary: int = vocabulary
         self.smoothing: float = smoothing
-        self.models = {}  # Dict[Language: LanguageTrainingModel]
+        self.models = {}  # Dict[Language: NgramLanguageTrainingModel]
 
         for lang in LANGUAGES:
             if ngram_size == 1:
-                self.models[lang] = LanguageTrainingModel(lang, UnigramModel(vocabulary))
+                self.models[lang] = NgramLanguageTrainingModel(lang, UnigramModel(vocabulary))
             elif ngram_size == 2:
-                self.models[lang] = LanguageTrainingModel(lang, BigramModel(vocabulary))
+                self.models[lang] = NgramLanguageTrainingModel(lang, BigramModel(vocabulary))
             elif ngram_size == 3:
-                self.models[lang] = LanguageTrainingModel(lang, TrigramModel(vocabulary))
+                self.models[lang] = NgramLanguageTrainingModel(lang, TrigramModel(vocabulary))
 
     def parse(self):
         document_count = 0
@@ -60,13 +60,13 @@ class DataParser:
             self.models[model_lang].compute()
 
 
-class TestParser:
+class NgramTestParser:
     """
-    Class that runs trained models against a test file
-    Precondition: DataParser object created and trained (parse() function was ran)
+    Class that runs a test file against trained models
+    Precondition: NgramTrainingDataParser object created and trained (parse() function was ran)
     """
 
-    def __init__(self, parser: DataParser, input_test_file: str):
+    def __init__(self, parser: NgramTrainingDataParser, input_test_file: str):
         self.training_parser = parser
         self.input_test_file = input_test_file
         self.count = 0
