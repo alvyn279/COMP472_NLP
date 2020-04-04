@@ -39,6 +39,8 @@ class NgramLanguageTrainingModel:
         """
         Returns log-ified (base 10) value to be added directly to the class score
         """
+        if occurence + self.smoothing == 0:
+            return 0
         return math.log10((occurence + self.smoothing) / (self.class_size + self.size_of_vocab))
 
     def insert(self, tweet: str):
@@ -57,9 +59,9 @@ class NgramLanguageTrainingModel:
         self.size_of_vocab = len(self.ngram_model.corpus)
         if self.ngram_model.vocab == 2:
             self.size_of_vocab += IS_ALPHA_COUNT
+            self.non_existing_char_prob = self._compute_prob_value(0)
         self.probabilities = copy.deepcopy(self.ngram_model.corpus)
         self.prior = math.log10(self.docs_for_this_model / self.total_doc_count)
-        self.non_existing_char_prob = self._compute_prob_value(0)
 
     def compute(self):
         for char_1 in self.probabilities:
