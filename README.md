@@ -6,6 +6,7 @@ Any language from Basque (eu), Catalan (ca), Galician (gl), Spanish (es), Englis
 
 
 #### Running the program
+Make sure to create an `output/` directory at root dir level.
 ```sh
 # for usage
 python nlp.py --help

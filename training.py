@@ -100,10 +100,22 @@ class Score:
         self.is_correct = self.guessed_lang == self.actual_lang
 
     def __str__(self):
-        return "{}\t{}\t{}\t{}\t{}".format(
+        return "\n{}\t{}\t{}\t{}\t{}".format(
             self.tweet_id,
             self.guessed_lang,
             self.score,
             self.actual_lang,
             "correct" if self.is_correct else "wrong"
         )
+
+
+class ClassScore:
+    def __init__(self, class_count: int):
+        self.true_positive = 0
+        self.false_positive = 0
+        self.true_negative = 0
+        self.false_negative = 0
+        self.precision = 0.0
+        self.recall = 0.0
+        self.f1 = 0.0
+        self.count = class_count
