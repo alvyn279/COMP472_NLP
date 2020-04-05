@@ -1,6 +1,7 @@
 from ngrams import NgramModel, CharNotInVocabularyException
 from nltk.tokenize import word_tokenize
 from typing import List
+from language import LANGUAGES
 import copy
 import math
 
@@ -13,8 +14,11 @@ for codepoint in range(17 * 2 ** 16):
 
 IS_ALPHA_COUNT = count
 
+BLACKLIST = ['http', 'https']
+BLACKLIST_SET = set(BLACKLIST)
 
-class NgramLanguageTrainingModel:
+
+class NgramTrainingModel:
     """
     Operates on the models, such as frequency to probability calculator
     """
@@ -95,20 +99,56 @@ class NgramLanguageTrainingModel:
         return score
 
 
-class StopWordTrainingModel:
+class TFIDFWithStopWordTrainingModel:
+    """
+    Simple bag of words model with increased weight given to stop words not that anymore
+    """
+
     def __init__(self, language: str, stop_words: List[str]):
         self.language = language
         self.corpus = {}
-        for stop_word in stop_words:
-            self.corpus[stop_word] = 1
+        self.stop_words = stop_words
+        self.word_occ_in_other_models = {}
+        self.weights = {}
 
     def insert(self, single_word: str):
         """
-        Adds value/weight to word
+        Adds occurence value to bag of words
+        Features:
+            - tf-idf weight calculation
+            - stop-word/non stop word
+            - is an alphanumerical word (denies special characters)
+            - omits single character words
         """
+        non_stop_word_value = 1
+        stop_word_value = 5
+
         lower_single_word = single_word.lower()
-        if lower_single_word in self.corpus:
-            self.corpus[lower_single_word] += 1
+        if lower_single_word.isalnum() \
+                and len(lower_single_word) != 1 \
+                and lower_single_word not in BLACKLIST_SET:
+            if lower_single_word not in self.stop_words:
+                if lower_single_word in self.corpus:
+                    self.corpus[lower_single_word] += non_stop_word_value
+                else:
+                    self.corpus[lower_single_word] = non_stop_word_value
+            else:
+                # Added value to stop words
+                if lower_single_word in self.corpus:
+                    self.corpus[lower_single_word] += stop_word_value
+                else:
+                    self.corpus[lower_single_word] = stop_word_value
+
+    def set_word_occ_in_other_models(self, word_occ):
+        self.word_occ_in_other_models = word_occ
+
+    def compute(self):
+        """
+        computes td-idf for ocurrence value
+        """
+        for word in self.corpus:
+            self.weights[word] = (1 + math.log10(self.corpus[word])) * \
+                                 math.log10(len(LANGUAGES) / self.word_occ_in_other_models[word])
 
     def test(self, tweet: str):
         """
@@ -118,8 +158,8 @@ class StopWordTrainingModel:
         text_tokens = word_tokenize(tweet)
         for text_token in text_tokens:
             lower_text_token = text_token.lower()
-            if lower_text_token in self.corpus:
-                score += self.corpus[lower_text_token]
+            if lower_text_token in self.weights:
+                score += self.weights[lower_text_token]
         return score
 
 

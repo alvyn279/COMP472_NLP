@@ -1,5 +1,5 @@
 from language import LANGUAGES
-from training import NgramLanguageTrainingModel, Score, ClassScore
+from training import NgramTrainingModel, Score, ClassScore
 from ngrams import UnigramModel, BigramModel, TrigramModel
 
 from typing import List
@@ -21,15 +21,15 @@ class NgramTrainingDataParser:
         self.ngram_size: int = ngram_size
         self.vocabulary: int = vocabulary
         self.smoothing: float = smoothing
-        self.models = {}  # Dict[Language: NgramLanguageTrainingModel]
+        self.models = {}  # Dict[Language: NgramTrainingModel]
 
         for lang in LANGUAGES:
             if ngram_size == 1:
-                self.models[lang] = NgramLanguageTrainingModel(lang, UnigramModel(vocabulary))
+                self.models[lang] = NgramTrainingModel(lang, UnigramModel(vocabulary))
             elif ngram_size == 2:
-                self.models[lang] = NgramLanguageTrainingModel(lang, BigramModel(vocabulary))
+                self.models[lang] = NgramTrainingModel(lang, BigramModel(vocabulary))
             elif ngram_size == 3:
-                self.models[lang] = NgramLanguageTrainingModel(lang, TrigramModel(vocabulary))
+                self.models[lang] = NgramTrainingModel(lang, TrigramModel(vocabulary))
 
     def parse(self):
         document_count = 0

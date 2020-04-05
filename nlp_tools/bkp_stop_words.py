@@ -1,9 +1,9 @@
 # Content extracted from https://github.com/Xangis/extra-stopwords
 
 BKP_STOP_WORDS = {
-    'eu': [],
-    'gl': [],
-    'ca': []
+    'eu': set(),
+    'gl': set(),
+    'ca': set()
 }
 
 for bkp_lang in BKP_STOP_WORDS:
@@ -15,7 +15,7 @@ for bkp_lang in BKP_STOP_WORDS:
         exit(1)
 
     lines = f.readlines()
-    bkp_lang_stop_words = []
+    bkp_lang_stop_words = set()
     for line in lines:
-        bkp_lang_stop_words.append(line.strip().split('\t')[0])
+        bkp_lang_stop_words.add(line.strip().split('\t')[0])
     BKP_STOP_WORDS[bkp_lang] = bkp_lang_stop_words

@@ -1,6 +1,6 @@
 import argparse
 from ngram_parser import NgramTrainingDataParser, NgramTestParser
-from byom_parser import StopWordTrainingParser, StopWordTestParser
+from byom_parser import TFIDFWithStopWordTrainingParser, StopWordTestParser
 
 parser = argparse.ArgumentParser(
     description='Naive Bayes Classifier for Tweet Language Detection',
@@ -36,13 +36,13 @@ def main():
     args = parser.parse_args()
 
     if args.v == -1 and args.n == -1 and args.delta == -1:
-        stop_word_model_training_parser: StopWordTrainingParser = StopWordTrainingParser(
+        tf_idf_stop_word_model_training_parser: TFIDFWithStopWordTrainingParser = TFIDFWithStopWordTrainingParser(
             args.training_file
         )
-        stop_word_model_training_parser.parse()
+        tf_idf_stop_word_model_training_parser.parse()
 
         stop_word_test_parser: StopWordTestParser = StopWordTestParser(
-            stop_word_model_training_parser,
+            tf_idf_stop_word_model_training_parser,
             args.testing_file
         )
         stop_word_test_parser.parse()
