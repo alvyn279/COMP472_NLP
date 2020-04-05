@@ -1,8 +1,13 @@
 # COMP472_NLP
+###### Duy-Khoi Alvyn Le, 40026393
 
 #### Naives Bayes Classifier for Tweet Language Recognition
 
 Any language from Basque (eu), Catalan (ca), Galician (gl), Spanish (es), English (en), and Portuguese (pt).
+
+Models implemented:
+- **n-gram** (unigram, bigram, and trigram): ~ 55-65% accuracy
+- **tf-idf with stop words**: ~ 90+ % accuracy
 
 
 #### Running the program
