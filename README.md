@@ -7,7 +7,7 @@ Any language from Basque (eu), Catalan (ca), Galician (gl), Spanish (es), Englis
 
 Models implemented:
 - **n-gram** (unigram, bigram, and trigram): ~ 55-65% accuracy
-- **tf-idf with stop words**: ~ 90+ % accuracy
+- **tf-idf with stop words**: ~ 90+% accuracy
 
 
 #### Running the program
