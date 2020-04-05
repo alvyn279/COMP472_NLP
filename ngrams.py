@@ -30,6 +30,11 @@ class NgramModel(ABC):
                 target_dict[char] = 0
 
     def vocab_safe_check(self, ngram: str, update=True):
+        """
+        Checks whether or not an n-gram can be inserted into the corpus
+        Updating the corpus with a new char can be optionally ignores
+        Raises CharNotInVocabularyException if not possible.
+        """
         if self.vocab == 0 or self.vocab == 1:
             for char in ngram:
                 # checking first level is sufficient, corpus already populated
@@ -64,19 +69,31 @@ class NgramModel(ABC):
 
     @abstractmethod
     def _build_corpus(self):
+        """
+        Builds initial corpus depending on type of n-gram
+        """
         pass
 
     @abstractmethod
     def _spread_new_vocab_char(self, char: str):
+        """
+        Given a char, spreads its value as new keys in the corpus dict
+        """
         pass
 
     @abstractmethod
     def _insert_ngram(self, ngram: str):
+        """
+        Inserts an n-gram by adding 1 to its ocurrence in the corpus
+        """
         pass
 
     @staticmethod
     @abstractmethod
     def get_prob(ngram: str, probabilities):
+        """
+        Defines how to access a corpusfor an n-gram
+        """
         pass
 
 

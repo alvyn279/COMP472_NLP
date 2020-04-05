@@ -1,5 +1,6 @@
 # COMP472_NLP
 ###### Duy-Khoi Alvyn Le, 40026393
+###### For access to this private repository, email me at alvyn279@gmail.com
 
 #### Naives Bayes Classifier for Tweet Language Recognition
 

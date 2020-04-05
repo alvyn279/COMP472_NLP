@@ -13,7 +13,7 @@ REL_PATH_TO_EVAL = "./output/eval_{}_{}_{}.txt"
 class NgramTrainingDataParser:
     """
     Parses the data contained in the files given as input
-    Builds models by populating the corpus
+    Builds models by populating the corpusread
     """
 
     def __init__(self, input_file: str, ngram_size: int, vocabulary: int, smoothing: float):

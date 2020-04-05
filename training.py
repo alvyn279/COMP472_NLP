@@ -37,6 +37,10 @@ class NgramTrainingModel:
         self.non_existing_char_prob = 0.0
 
     def _ngrams_list(self, tweet: str):
+        """
+        Divides the tweet into all the possible contiguous sequences of characters of
+         length [unigram:1, bigram:2, trigram:3]
+        """
         return list(tweet[j:j + self.ngram_model.n] for j in range(0, len(tweet) - (self.ngram_model.n - 1)))
 
     def _compute_prob_value(self, occurence: int):
@@ -68,6 +72,9 @@ class NgramTrainingModel:
         self.prior = math.log10(self.docs_for_this_model / self.total_doc_count)
 
     def compute(self):
+        """
+        Computes probabilities over the held copy of the corpus of the language model
+        """
         for char_1 in self.probabilities:
             if isinstance(self.probabilities[char_1], int):
                 self.probabilities[char_1] = self._compute_prob_value(self.probabilities[char_1])
@@ -86,7 +93,7 @@ class NgramTrainingModel:
 
     def test(self, tweet: str):
         """
-        Computes score for given tweet for the current class
+        Computes score for given tweet for the current class (language)
         """
         score = self.prior
         for ngram in self._ngrams_list(tweet):
@@ -115,7 +122,6 @@ class TFIDFWithStopWordTrainingModel:
         """
         Adds occurence value to bag of words
         Features:
-            - tf-idf weight calculation
             - stop-word/non stop word
             - is an alphanumerical word (denies special characters)
             - omits single character words
@@ -140,11 +146,15 @@ class TFIDFWithStopWordTrainingModel:
                     self.corpus[lower_single_word] = stop_word_value
 
     def set_word_occ_in_other_models(self, word_occ):
+        """
+        Sets the value for the dict of word occurence in other models for the current
+        language. Max value of len(LANGUAGES)
+        """
         self.word_occ_in_other_models = word_occ
 
     def compute(self):
         """
-        computes td-idf for ocurrence value
+        Computes td-idf for ocurrence value of every word in the corpus
         """
         for word in self.corpus:
             self.weights[word] = (1 + math.log10(self.corpus[word])) * \
@@ -152,7 +162,7 @@ class TFIDFWithStopWordTrainingModel:
 
     def test(self, tweet: str):
         """
-        Computes score for given tweet for the stop word training model
+        Computes score for given tweet for the tf-idf stop word training model
         """
         score = 0
         text_tokens = word_tokenize(tweet)
@@ -164,6 +174,9 @@ class TFIDFWithStopWordTrainingModel:
 
 
 class Score:
+    """
+    Holds the score attributes obtained for a single tweet after running against model
+    """
     def __init__(self, tweet_id, score, guessed_lang, actual_lang):
         self.tweet_id = tweet_id
         self.score = score
@@ -182,6 +195,9 @@ class Score:
 
 
 class ClassScore:
+    """
+    For a given class (i.e: language), holds stats regarding the parsed data
+    """
     def __init__(self, class_count: int):
         self.true_positive = 0
         self.false_positive = 0
