@@ -1,6 +1,6 @@
 # COMP472_NLP
 ###### Duy-Khoi Alvyn Le, 40026393
-###### For access to this private repository, email me at alvyn279@gmail.com
+###### [GitHub repo](https://github.com/alvyn279/COMP472_NLP)
 
 #### Naives Bayes Classifier for Tweet Language Recognition
 
@@ -14,6 +14,15 @@ Models implemented:
 #### Running the program
 Make sure to create an `output/` directory at root dir level.
 ```sh
+# create virtual env
+python3 -m venv venv
+
+# activate env
+source ./venv/bin/activate
+
+# install requirements
+pip install -r requirements.txt
+
 # for usage
 python nlp.py --help
 
