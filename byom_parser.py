@@ -117,9 +117,10 @@ class StopWordTestParser:
         eval_recall = ''
         eval_f1 = ''
         for lang_ in LANGUAGES:
-            eval_precision += '{}\t'.format(self.class_scores[lang_].precision)
-            eval_recall += '{}\t'.format(self.class_scores[lang_].recall)
-            eval_f1 += '{}\t'.format(self.class_scores[lang_].f1)
+            if lang_ in self.class_scores:
+                eval_precision += '{}\t'.format(self.class_scores[lang_].precision)
+                eval_recall += '{}\t'.format(self.class_scores[lang_].recall)
+                eval_f1 += '{}\t'.format(self.class_scores[lang_].f1)
 
         eval_out += '{}\n{}\n{}\n'.format(eval_precision, eval_recall, eval_f1)
         eval_out += '{}\t{}\n'.format(self.final_macro_f1, self.final_weighed_avg_f1)
@@ -186,7 +187,8 @@ class StopWordTestParser:
         """
         class_scores_ = {}
         for lang_ in LANGUAGES:
-            class_scores_[lang_] = ClassScore(self.class_occ[lang_])
+            if lang_ in self.class_occ:
+                class_scores_[lang_] = ClassScore(self.class_occ[lang_])
 
         result_list: List[Score]  # sorted in reverse order
         for result_list in self.results:
@@ -194,14 +196,15 @@ class StopWordTestParser:
                 first = count == 0
                 correct = score.is_correct
 
-                if first and correct:
-                    class_scores_[score.guessed_lang].true_positive += 1
-                elif first and not correct:
-                    class_scores_[score.guessed_lang].false_positive += 1
-                elif not first and correct:
-                    class_scores_[score.guessed_lang].false_negative += 1
-                elif not first and not correct:
-                    class_scores_[score.guessed_lang].true_negative += 1
+                if score.guessed_lang in class_scores_:
+                    if first and correct:
+                        class_scores_[score.guessed_lang].true_positive += 1
+                    elif first and not correct:
+                        class_scores_[score.guessed_lang].false_positive += 1
+                    elif not first and correct:
+                        class_scores_[score.guessed_lang].false_negative += 1
+                    elif not first and not correct:
+                        class_scores_[score.guessed_lang].true_negative += 1
 
         for lang_ in class_scores_:
             if class_scores_[lang_].true_positive != 0 or class_scores_[lang_].false_positive != 0:

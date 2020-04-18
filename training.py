@@ -125,6 +125,7 @@ class TFIDFWithStopWordTrainingModel:
             - stop-word/non stop word
             - is an alphanumerical word (denies special characters)
             - omits single character words
+            - word should not be in blacklist
         """
         non_stop_word_value = 1
         stop_word_value = 5
