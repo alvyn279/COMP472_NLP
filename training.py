@@ -208,3 +208,15 @@ class ClassScore:
         self.recall = 0.0
         self.f1 = 0.0
         self.count = class_count
+
+    def __str__(self):
+        return """\n
+        | \t\t\t| Predicted Postive\t| Predicted Negative\t|
+        | Actual Postive\t| {}\t\t\t| {}\t\t\t|
+        | Actual Negative\t| {}\t\t\t| {}\t\t\t| \n\n
+        """.format(
+            self.true_positive,
+            self.false_negative,
+            self.false_positive,
+            self.true_negative
+        )

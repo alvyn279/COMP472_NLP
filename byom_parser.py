@@ -180,6 +180,9 @@ class StopWordTestParser:
         self._output_to_trace_file()
         self.run_stats()
 
+        for class_score in self.class_scores:
+            print("{} \n{}".format(class_score, self.class_scores[class_score]))
+
     def run_stats(self):
         """
         Accuracy, per-class precision, per-class recall, per-class F1 measure,

@@ -153,6 +153,9 @@ class NgramTestParser:
         self.run_stats()
         self._output_to_eval_file()
 
+        for class_score in self.class_scores:
+            print("{} \n{}".format(class_score, self.class_scores[class_score]))
+
     def process_results(self):
         correct = 0
         result: List[Score]  # sorted in reverse order
