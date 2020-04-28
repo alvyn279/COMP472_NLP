@@ -2,7 +2,7 @@
 ###### Duy-Khoi Alvyn Le, 40026393
 ###### [GitHub repo](https://github.com/alvyn279/COMP472_NLP)
 
-#### Naives Bayes Classifier for Tweet Language Recognition
+#### Naive Bayes classifier for Tweet Language Identification
 
 Any language from Basque (eu), Catalan (ca), Galician (gl), Spanish (es), English (en), and Portuguese (pt).
 
