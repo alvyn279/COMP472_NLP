@@ -20,7 +20,7 @@ BLACKLIST_SET = set(BLACKLIST)
 
 class NgramTrainingModel:
     """
-    Operates on the models, such as frequency to probability calculator
+    Operates on n-grams models, such as frequency to probability calculator
     """
 
     def __init__(self, language: str, ngram_model: NgramModel):

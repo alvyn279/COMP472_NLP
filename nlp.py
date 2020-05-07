@@ -1,6 +1,5 @@
 import argparse
-from ngram_parser import NgramTrainingDataParser, NgramTestParser
-from byom_parser import TFIDFWithStopWordTrainingParser, StopWordTestParser
+from parser import NgramTrainingDataParser, NgramTestParser, TFIDFWithStopWordTrainingParser, StopWordTestParser
 
 parser = argparse.ArgumentParser(
     description='Naive Bayes Classifier for Tweet Language Detection',
