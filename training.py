@@ -1,7 +1,8 @@
+from language import LANGUAGES
 from ngrams import NgramModel, CharNotInVocabularyException
 from nltk.tokenize import word_tokenize
 from typing import List
-from language import LANGUAGES
+
 import copy
 import math
 
@@ -13,7 +14,6 @@ for codepoint in range(17 * 2 ** 16):
         count = count + 1
 
 IS_ALPHA_COUNT = count
-
 BLACKLIST = ['http', 'https']
 BLACKLIST_SET = set(BLACKLIST)
 

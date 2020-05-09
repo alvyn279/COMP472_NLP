@@ -1,13 +1,12 @@
 from abc import ABC, abstractmethod
 from language import LANGUAGES, LANGUAGE_DICT
-from training import NgramTrainingModel, TFIDFWithStopWordTrainingModel, Score, ClassScore
 from ngrams import UnigramModel, BigramModel, TrigramModel
+from training import NgramTrainingModel, TFIDFWithStopWordTrainingModel, Score, ClassScore
+from typing import List, Dict, Any
 
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nlp_tools.bkp_stop_words import BKP_STOP_WORDS
-
-from typing import List
 
 import os
 
@@ -30,7 +29,7 @@ class TrainingParser(ABC):
     Abstract class for training data parser
     """
     def __init__(self, input_file):
-        self.models = {}  # Dict[Language: TFIDFWithStopWordTrainingModel]
+        self.models: Dict[str, Any] = {}
         self.input_file: str = input_file
 
     @abstractmethod
@@ -82,7 +81,7 @@ class NgramTrainingDataParser(TrainingParser):
         self.ngram_size: int = ngram_size
         self.vocabulary: int = vocabulary
         self.smoothing: float = smoothing
-        self.models = {}  # Dict[Language: NgramTrainingModel]
+        self.models: Dict[str: NgramTrainingModel] = {}
 
         for lang_ in LANGUAGES:
             if ngram_size == 1:
@@ -112,6 +111,8 @@ class TFIDFWithStopWordTrainingParser(TrainingParser):
     def __init__(self, input_file: str):
         super(TFIDFWithStopWordTrainingParser, self).__init__(input_file)
         self.language_stop_words = language_stopwords
+        self.models: Dict[str: TFIDFWithStopWordTrainingModel] = {}
+
         for language in LANGUAGES:
             self.models[language] = TFIDFWithStopWordTrainingModel(language, self.language_stop_words[language])
 
@@ -153,16 +154,16 @@ class TestParser(ABC):
     Abstract class for test data parser
     """
     def __init__(self, training_parser: TrainingParser, input_test_file: str):
-        self.training_parser = training_parser
-        self.input_test_file = input_test_file
+        self.training_parser: TrainingParser = training_parser
+        self.input_test_file: str = input_test_file
         self.count = 0
         self.results: List[List[Score]] = []
         self.trace_output: str = ''
         self.final_accuracy = 0.0
         self.final_macro_f1 = 0.0
         self.final_weighed_avg_f1 = 0.0
-        self.class_scores = {}
-        self.class_occ = {}
+        self.class_scores: Dict[str, ClassScore] = {}
+        self.class_occ: Dict[str, int] = {}
 
     def _output_to_trace_file(self):
         cur_dir = os.path.dirname(__file__)
